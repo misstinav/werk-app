@@ -2,14 +2,14 @@ import { Button, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Activit
 import { RN_BACKEND_URL } from "@env";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import { EventRegister } from 'react-native-event-listeners'
 
 // workout screen
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
   const [response, setResponse] = useState();
@@ -78,10 +78,10 @@ const HomeScreen = () => {
         <Text style={styles.title}>Werk</Text>
         <TouchableOpacity
         style={{paddingLeft: "33%"}}
-        onPress={() => navigation.navigate('ExerciseGraph')}
+        // onPress={() => navigation.navigate('ExerciseGraph', userData)}
         >
-          <Ionicons name="time-outline" size={24} color="black" />
-          {/* <Ionicons name="ios-stats-chart" size={24} color="black"/> */}
+          {/* <Ionicons name="time-outline" size={24} color="black" /> */}
+          <Ionicons name="ios-stats-chart" size={24} color="black"/>
         </TouchableOpacity>
       </View>
       {/* end header */}

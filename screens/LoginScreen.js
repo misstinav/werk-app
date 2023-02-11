@@ -1,30 +1,18 @@
 import { Button, StyleSheet, Text, SafeAreaView, TextInput, View, TouchableOpacity } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import React, { useState, useContext } from 'react'
 
 
 // fake the funk
-const LoginScreen = ( props, {onLogin } ) => {
+const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [appUser, setAppUser] = useState(false);
 
-  const navigation = useNavigation();
 
   const onPressLoginButton = () => {
-    setAppUser(false)
-    console.log(navigation)
-    // console.log(appUser)
-    // navigation.navigate('HomeScreen') 
-    // {
-    //   // username: username,
-    //   // password: password
-    // });
-    // setUsername('')
-    // setPassword('')
+    let user = true
+    navigation.navigate('Home');
   }
-  console.log("outside fn")
-  // console.log(appUser)
 
 
   return (
@@ -60,13 +48,9 @@ const LoginScreen = ( props, {onLogin } ) => {
       <TouchableOpacity
       style={styles.login_button}
       onPress={onPressLoginButton}
-      // onPress={() => navigation.navigate('HomeScreen')}
       >
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
-      {/* <Button
-      title='LOGIN'
-      onPress={() => navigation.navigate('HomeScreen')}/> */}
     </SafeAreaView>
   )
 }
