@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import StackNavigator from './StackNavigator';
+import { NavigationContainer } from '@react-navigation/native';
+
+// rnfes  --code to start a new component with build (react native functional export stylesheet)
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+        <StackNavigator />
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F3DFC1',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    color: '#160F29',
+    fontSize: '40px'
+  }
 });
