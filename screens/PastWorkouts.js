@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, SectionList, FlatList } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,11 +20,19 @@ const PastWorkouts = ( {navigation}) => {
       .get(`${RN_BACKEND_URL}/users/1/workouts`)
         .then((response) => {
           setIsLoading(false)
-          // console.log(response.data)
+          console.log(response.data)
+
           let newArray = [];
           response.data.map((item) => {
-            newArray.push(item[Object.keys(item)])
+            console.log(item[Object.keys(item)])
+            newArray.push({'data' : item[Object.keys(item)]})
           })
+
+
+          // let newArray = response.data.map((item) => {
+          //   return {key: item.id, value: item}
+          // });
+
           setIsLoading(false)
           setWorkoutData(newArray)
         })
@@ -51,11 +59,21 @@ const PastWorkouts = ( {navigation}) => {
         <Text>PastWorkouts</Text>
       </View>
       <View>
-        <FlatList
+        {/* <FlatList
         data={workoutData}
         renderItem={({ item }) => (
           <Text>{ item }</Text>
-        )}/>
+        )}/> */}
+        <SectionList
+        sections={workoutData}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item}</Text>
+          </View>
+        )}
+        />
+
       </View>
     </SafeAreaView>
   )
