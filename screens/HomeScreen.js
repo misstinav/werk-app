@@ -3,13 +3,12 @@ import { RN_BACKEND_URL } from "@env";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import { EventRegister } from 'react-native-event-listeners'
 
 // workout screen
-const HomeScreen = () => {
-  // const navigation = useNavigation();
+const HomeScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
   const [response, setResponse] = useState();
@@ -42,7 +41,7 @@ const HomeScreen = () => {
       .get(`${RN_BACKEND_URL}/users/1`)
         .then((result) => {
           setIsLoading(false);
-          // setResponse(result);
+          setResponse(result.data);
           setUserData(result.data);
           // console.log(`This is the result of the api call: ${result.data}`)
         },
@@ -75,19 +74,25 @@ const HomeScreen = () => {
 
       {/* start header */}
       <View style={styles.container}>
+        <TouchableOpacity
+        style={styles.headerBtns}
+        onPress={() => navigation.navigate('Workouts')}>
+          <Ionicons name='chevron-back-outline' size={24} color='#160F29'/>
+          <MaterialIcons name="history" size={24} color="black" />
+        </TouchableOpacity>
         <Text style={styles.title}>Werk</Text>
         <TouchableOpacity
-        style={{paddingLeft: "33%"}}
-        // onPress={() => navigation.navigate('ExerciseGraph', userData)}
+        style={styles.headerBtns}
+        onPress={() => navigation.navigate('Progress')}
         >
-          {/* <Ionicons name="time-outline" size={24} color="black" /> */}
           <Ionicons name="ios-stats-chart" size={24} color="black"/>
+          <Ionicons name="chevron-forward-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
       {/* end header */}
 
       {/* display username */}
-      <Text style={styles.username}>Let's build a workout {userData.username}</Text>
+      <Text style={styles.username}>Let's build a workout {userData.logged_exercise}</Text>
 
       {/* Begin input section */}
       <View style={styles.inputBox}>
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     // backgroundColor: "#F3DFC1",
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     alignItems: "flex-end"
   },
   title: {
@@ -161,5 +166,10 @@ const styles = StyleSheet.create({
   btnText : {
     fontSize: 15,
     color: "#fff",
+  },
+  headerBtns: {
+    // marginRight: ,
+    flexDirection: 'row',
+    alignItems: 'center',
   }
 })

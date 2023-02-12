@@ -1,45 +1,63 @@
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
 import React, {useState, useEffect} from 'react'
-import Header from '../components/Header';
-import userData from '../screens/HomeScreen';
+import { RN_BACKEND_URL } from "@env";
+// import response from '../screens/HomeScreen';
 import { SelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios'
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 
-const ExerciseGraph = ({ navigation }) => {
+const ExerciseGraph = ({ navigation, route }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState();
+  const [response, setResponse] = useState();
   const [selected, setSelected] = useState("");
-  const [data, setData] = useState([]);
+  const [pickerData, setPickerData] = useState([]);
+  const [userData, setUserData] = useState("")
 
-  // console.log(navigation.param('username'));
-//   useEffect(() => 
-//   axios.get(`${process.env.RN_APP_BACKEND_URL}/exercises`)
-//   .then((response) => {
-//     let newArray = response.data.map((item) => {
-//       return {key: item.exercise_id, value: item.name};
-//     })
-//     setData(newArray)
-//   })
-//   .catch((error) => {
-//     console.log(error)
-//   }), [])
+  useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get(`${RN_BACKEND_URL}/users/1`)
+        .then((result) => {
+          setIsLoading(false);
+          setResponse(result.data);
+          console.log(result.data["logged_exercises"])
+          // it workssss. use this data to create map. use dropdown documentation
+          // let availExercises = result.data("logged_exercises").map((exerciseObj) => {
+            // return(value: exerciseObj.key)
+          // })
+          // setUserData(result.data);
+          console.log(result.data)
+        },
+        (error) => {
+          setIsLoading(false);
+          setError(error);
+        })
+  }, []);
 
-  // const chartRef = useRef(null);
+  // useEffect(() =>
+  // axios
+  // .get
+  // )
 
-  // useEffect(() => {
-  //   const chart = chartRef.current;
 
-  //   if (chart) {
-  //     console.log('ChartJS', chart);
-  //   }
-  // }, []);
-
+  
   return (
     <SafeAreaView>
-      <Header title="Progress Check"/>
+      <View style={styles.container}>
+        <View style={{flexDirection: "row", alignItems: "center"}}>
+          <TouchableOpacity onPress={()=> navigation.goBack()} style={{padding: 5}}>
+            <Ionicons name='chevron-back-outline' size={34} color='#160F29'/>
+          </TouchableOpacity>
+          <Text style={{paddingLeft: 75, fontSize: 20, fontWeight: "bold"}}>Progress Check</Text>
+        </View>
+      </View>
+{/* Header end */}
       <SelectList
       setSelected={setSelected}
-      data={data}
+      data={pickerData}
       // onSelect={() => alert(selected)}
       />
       <Text>{navigation.getParam('username')}</Text>
@@ -50,4 +68,11 @@ const ExerciseGraph = ({ navigation }) => {
 
 export default ExerciseGraph
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    padding: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }
+})
