@@ -37,10 +37,7 @@ const ExerciseGraph = ({ navigation, route }) => {
         })
   }, []);
 
-  // useEffect(() =>
-  // axios
-  // .get
-  // )
+
 
 
   

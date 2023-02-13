@@ -6,11 +6,10 @@ import React, { useState, useContext } from 'react'
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
-  const [appUser, setAppUser] = useState(false);
+
 
 
   const onPressLoginButton = () => {
-    let user = true
     navigation.navigate('Home');
   }
 

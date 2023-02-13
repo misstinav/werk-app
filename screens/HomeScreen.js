@@ -1,8 +1,7 @@
-import { Button, StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 import { RN_BACKEND_URL } from "@env";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 import { EventRegister } from 'react-native-event-listeners'
@@ -43,7 +42,6 @@ const HomeScreen = ({navigation}) => {
           setIsLoading(false);
           setResponse(result.data);
           setUserData(result.data);
-          // console.log(`This is the result of the api call: ${result.data}`)
         },
         (error) => {
           setIsLoading(false);
@@ -56,10 +54,15 @@ const HomeScreen = ({navigation}) => {
     axios
       .post(`${RN_BACKEND_URL}/users/1/workouts`, selected)
         .then((response) => {
+          let newArray = [];
+          response.data.map((item) => {
+            newArray.push(item)
+          })
           setIsLoading(false);
-          setWorkoutData(response.data);
-          console.log(response.data)
-          console.log(workoutData)
+          setWorkoutData(newArray)
+          // setWorkoutData(response.data);
+          // console.log(response.data)
+          // console.log(workoutData)
         })
         .catch((error) => {
           setIsLoading(false);
@@ -68,11 +71,14 @@ const HomeScreen = ({navigation}) => {
         });
   };
 
+  const Item = ({ item }) => {
+    <View><Text>{item}</Text></View>
+  }
 
   return (
     <SafeAreaView>
 
-      {/* start header */}
+{/* start header */}
       <View style={styles.container}>
         <TouchableOpacity
         style={styles.headerBtns}
@@ -89,12 +95,11 @@ const HomeScreen = ({navigation}) => {
           <Ionicons name="chevron-forward-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      {/* end header */}
 
-      {/* display username */}
+{/* display username */}
       <Text style={styles.username}>Let's build a workout {userData.logged_exercise}</Text>
 
-      {/* Begin input section */}
+{/* Begin input section */}
       <View style={styles.inputBox}>
         <MultipleSelectList
         save="value"
@@ -110,16 +115,17 @@ const HomeScreen = ({navigation}) => {
       >
         <Text style={styles.btnText}>Generate</Text>
       </TouchableOpacity>
-      {/* end input section */}
 
-      {/* start display workout */}
+{/* start display workout */}
       <View>
-        {}
+        <FlatList
+        data={workoutData}
+        renderItem={({ item }) =>
+          <Item title={item}/>}
+        />
+        {/* <Text>I am the workout list</Text> */}
+        {/* {getUsername()} */}
       </View>
-        <View>
-          <Text>I am the workout list</Text>
-          {/* {getUsername()} */}
-        </View>
       {/* end display workout */}
     </SafeAreaView>
   )
