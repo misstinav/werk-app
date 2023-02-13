@@ -112,8 +112,8 @@ const PastWorkouts = ( {navigation} ) => {
                 onChangeText={(reps) => setReps(reps)}/>
               </View>
               <TouchableOpacity
-              onPress={addSetHandler}
-              style={style.storeSetBtn}>
+              // onPress={addSetHandler}
+              style={styles.storeSetBtn}>
                 <Text style={styles.btnText}>Record set</Text>
               </TouchableOpacity>
 
