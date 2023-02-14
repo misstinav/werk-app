@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Dimensions, SectionList } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { RN_BACKEND_URL } from "@env";
-// import response from '../screens/HomeScreen';
 import { SelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { LineChart } from 'react-native-chart-kit';
 
 
 
@@ -15,21 +15,11 @@ const ExerciseGraph = ({ navigation, route }) => {
   const [response, setResponse] = useState();
   const [selected, setSelected] = useState("");
   const [pickerData, setPickerData] = useState([]);
-  // const [userData, setUserData] = useState("")
+
   const [exeDates, setExeDates] = useState([]);
   const [weightData, setWeightData] = useState([]);
+  const [renderGraph, setRenderGraph] = useState(false);
 
-
-  const graphData = {
-    labels: {exeDates},
-    datasets: [
-      {
-        data: {weightData},
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2
-      }
-    ]
-  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,7 +32,6 @@ const ExerciseGraph = ({ navigation, route }) => {
           result.data['logged_exercises'].map((dict) => {
             if (dict) {
               let name = Object.keys(dict)
-              // console.log(dict[name])
               exeNameArray.push(name)
               datesArray.push(dict[name])
             }
@@ -57,7 +46,7 @@ const ExerciseGraph = ({ navigation, route }) => {
         })
   }, []);
 
-  const showGraphOnSelect = () => {
+  const updateGraphDataOnSelect = () => {
     axios
       .get(`${RN_BACKEND_URL}/exercises/${selected}`)
       .then((result) => {
@@ -66,12 +55,12 @@ const ExerciseGraph = ({ navigation, route }) => {
             dateDict[Object.keys(dateDict)].map((setInfo) => {
               for (let listId in setInfo['weight']) {
                 console.log(listId)
-                weightArray.push(setInfo['weight'][listId])
+                console.log(setInfo['weight'][listId])
               } //for loop
             }) //dateDict map
         }) //result.data map
         setWeightData(weightArray)
-        graphData() //call the data function
+        setRenderGraph(true)
       })
       .catch((error) => {
         setIsLoading(false);
@@ -80,9 +69,6 @@ const ExerciseGraph = ({ navigation, route }) => {
       });
   }
 
-
-
-  
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -93,16 +79,46 @@ const ExerciseGraph = ({ navigation, route }) => {
           <Text style={{paddingLeft: 75, fontSize: 20, fontWeight: "bold"}}>Progress Check</Text>
         </View>
       </View>
-{/* Header end */}
-      <SelectList
-      setSelected={setSelected}
-      data={pickerData}
-      onSelect={showGraphOnSelect}
-      />
-      <Text>{navigation.getParam('username')}</Text>
-      {/* <Chart ref={chartRef} type='line' data={chartData}/> */}
-    </SafeAreaView>
+  {/* Header end */}
 
+    <SelectList
+    setSelected={setSelected}
+    data={pickerData}
+    onSelect={updateGraphDataOnSelect}
+    />
+    <View>
+    {renderGraph ?
+            <LineChart
+              data={{
+                labels: ['2023-01-03', '2023-02-10', '2023-02-12',],
+                // labels: {exeDates},
+                datasets: [
+                  {
+                    data: [100,125, 135],
+                    // data: {weightData},
+                    strokeWidth: 2,
+                  },
+                ],
+              }}
+              width={Dimensions.get('window').width - 16}
+              height={220}
+              chartConfig={{
+                backgroundColor: '#1cc910',
+                backgroundGradientFrom: '#eff3ff',
+                backgroundGradientTo: '#efefef',
+                decimalPlaces: 2,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
+              }}
+            />: null}
+          </View>
+    </SafeAreaView>
   )
 }
 

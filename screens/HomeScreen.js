@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, FlatList, } from 'react-native'
 import { RN_BACKEND_URL } from "@env";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
-import { EventRegister } from 'react-native-event-listeners'
+
 
 // workout screen
 const HomeScreen = ({navigation}) => {
@@ -14,8 +14,6 @@ const HomeScreen = ({navigation}) => {
 
   const [workoutData, setWorkoutData] = useState([]);
   const [selected, setSelected] = useState("");
-  const [selectedMuscle, setSelectedMuscle] = useState("");
-  const [difficulty, setDifficulty] = useState("");
   const [userData, setUserData] = useState("")
 
   const inputData = [
@@ -47,6 +45,7 @@ const HomeScreen = ({navigation}) => {
           setIsLoading(false);
           setError(error);
         })
+        setWorkoutData([])
   }, []);
 
   const addWorkoutHandler = () => {
@@ -56,13 +55,10 @@ const HomeScreen = ({navigation}) => {
         .then((response) => {
           let newArray = [];
           response.data.map((item) => {
-            newArray.push(item)
+            newArray.push({key: item})
           })
           setIsLoading(false);
           setWorkoutData(newArray)
-          // setWorkoutData(response.data);
-          // console.log(response.data)
-          // console.log(workoutData)
         })
         .catch((error) => {
           setIsLoading(false);
@@ -70,10 +66,6 @@ const HomeScreen = ({navigation}) => {
           console.log(error.message)
         });
   };
-
-  const Item = ({ item }) => {
-    <View><Text>{item}</Text></View>
-  }
 
   return (
     <SafeAreaView>
@@ -86,7 +78,7 @@ const HomeScreen = ({navigation}) => {
           <Ionicons name='chevron-back-outline' size={24} color='#160F29'/>
           <MaterialIcons name="history" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Werk</Text>
+        <Text style={styles.header}>Werk</Text>
         <TouchableOpacity
         style={styles.headerBtns}
         onPress={() => navigation.navigate('Progress')}
@@ -118,15 +110,15 @@ const HomeScreen = ({navigation}) => {
 
 {/* start display workout */}
       <View>
+        {workoutData ?
         <FlatList
         data={workoutData}
         renderItem={({ item }) =>
-          <Item title={item}/>}
-        />
-        {/* <Text>I am the workout list</Text> */}
-        {/* {getUsername()} */}
+        <View style={styles.item} >
+        <Text style={styles.title} >{item.key}</Text>
+        </View>}
+        /> : null}
       </View>
-      {/* end display workout */}
     </SafeAreaView>
   )
 }
@@ -135,12 +127,11 @@ export default HomeScreen
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 2,
-    // backgroundColor: "#F3DFC1",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end"
   },
-  title: {
+  header: {
     justifyContent: 'space-between',
     color: "#160F29",
     textAlign: 'center',
@@ -152,7 +143,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingVertical: 30,
     borderColor: "#160F29",
-    // borderWidth: 2,
   },
   username : {
     fontSize: 20,
@@ -174,8 +164,16 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   headerBtns: {
-    // marginRight: ,
     flexDirection: 'row',
     alignItems: 'center',
-  }
+  },
+  item: {
+    backgroundColor: '#246A73',
+    padding: 20,
+    marginVertical: 8,
+  },
+  title: {
+    fontSize: 24,
+    color: '#fff'
+  },
 })

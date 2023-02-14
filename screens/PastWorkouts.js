@@ -1,10 +1,9 @@
 import { StyleSheet, Text, View, TouchableOpacity, SectionList, Modal, TextInput } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { RN_BACKEND_URL } from "@env";
-// import AddSetModal from '../components/AddSetModal';
 
 
 
@@ -18,6 +17,8 @@ const PastWorkouts = ( {navigation} ) => {
   const [weight, setWeight] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState("");
+  const [exerciseName, setExerciseName] = useState("");
+  const [wkoutNames, setWkoutNames] = useState([]);
 
   useEffect(() => {
     setIsLoading(true)
@@ -26,14 +27,17 @@ const PastWorkouts = ( {navigation} ) => {
         .then((response) => {
           setIsLoading(false)
           let newArray = [];
+          let keyArray = [];
           response.data.map((item, index) => {
+            keyArray.push(Object.keys(item))
             newArray.push({
               'data' : item[Object.keys(item)],
               'index': index+1
             })
           })
           setIsLoading(false)
-          setWorkoutData(newArray)
+          setWorkoutData(newArray);
+          setWkoutNames(keyArray);
         })
           .catch((error) => {
             setIsLoading(false);
@@ -42,16 +46,30 @@ const PastWorkouts = ( {navigation} ) => {
           });
   }, []);
 
-  // need to work on passing data between fn to modal
   const passDataToModal = item => {
     setModalData(item)
     setModalOpen(true)
   }
 
-  // const addSetHandler = () => {
-  //   setIsLoading(true);
-
-  // }
+  const addSetHandler = (e) => {
+    setIsLoading(true);
+    setModalOpen(false)
+    axios
+      .patch(`${RN_BACKEND_URL}/users/1/workouts/${4}/log_exercise`, (reps, weight))
+        .then((response) => {
+          console.log(response.data)
+          setIsLoading(false);
+          alert("Set has been saved!");
+          setModalOpen(false);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setError(error);
+          console.log(error.message)
+        })
+        setReps("")
+        setWeight("")
+  }
 
   return (
     <SafeAreaView>
@@ -71,13 +89,14 @@ const PastWorkouts = ( {navigation} ) => {
         <SectionList
         sections={workoutData}
         keyExtractor={(item, index) => item + index}
+
         renderItem={({ item }) => (
           <TouchableOpacity
-          onPress={passDataToModal}
-          
+          value={item}
+          onPress={(e) => passDataToModal(item)}          
           >
-          <View style={styles.item}>
-            <Text style={styles.title}>{item}</Text>
+          <View style={styles.item} >
+            <Text style={styles.title} >{item}</Text>
           </View>
         </TouchableOpacity>
         )}
@@ -95,9 +114,9 @@ const PastWorkouts = ( {navigation} ) => {
         >
           <View style={{backgroundColor: '#000000aa', flex: 1}}>
             <View style={styles.innerModal}>
-              <Text style={{fontSize: 50}}>{modalData}</Text>
-              <Text style={{fontSize: 20}}>Please enter your set</Text>
-              <View>
+              <Text style={{fontSize: 50, alignSelf: 'center'}}>{modalData}</Text>
+              <Text style={{fontSize: 20, alignSelf: 'center'}}>Please enter your set</Text>
+              <View style={styles.modalInput}>
                 <TextInput
                 style={styles.TextInput}
                 placeholder="reps"
@@ -109,10 +128,10 @@ const PastWorkouts = ( {navigation} ) => {
                 placeholder="weight"
                 placeholderTextColor="#246A73"
                 value={weight}
-                onChangeText={(reps) => setReps(reps)}/>
+                onChangeText={(weight) => setWeight(weight)}/>
               </View>
               <TouchableOpacity
-              // onPress={addSetHandler}
+              onPress={addSetHandler}
               style={styles.storeSetBtn}>
                 <Text style={styles.btnText}>Record set</Text>
               </TouchableOpacity>
@@ -151,6 +170,7 @@ const styles = StyleSheet.create({
   },
   innerModal: {
     flex: 1,
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
     marginVertical: 200,
     marginHorizontal: 30,
@@ -170,4 +190,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#fff",
   },
+  modalInput: {
+    alignSelf: 'center',
+  },
+  TextInput: {
+    fontSize: 24
+  }
+
 })
